@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 import * as os from "node:os";
 import { URLs } from "./src/types";
+import * as dotenv from "dotenv";
 
 /**
  * Read environment variables from file.
@@ -10,11 +11,12 @@ import { URLs } from "./src/types";
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+dotenv.config();
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: "./e2e",
   timeout: 50000,
   expect: {
     timeout: 5000,
@@ -47,17 +49,31 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
-    baseURL: URLs.base,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retry-with-video",
   },
+  globalSetup: require.resolve("./global-setup"),
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      name: "ui-tests",
+      testDir: "./e2e/ui",
+      use: {
+        baseURL: URLs.ui,
+        ...devices["Desktop Chrome"],
+      },
+    },
+    {
+      name: "api-tests",
+      testDir: "./e2e/api",
+      use: {
+        baseURL: URLs.api,
+        extraHTTPHeaders: {
+          Authorization: `Bearer ${process.env.API_TOKEN}`,
+        },
+      },
     },
   ],
   outputDir: "test-results/",

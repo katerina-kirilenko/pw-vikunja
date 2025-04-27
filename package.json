@@ -1,22 +1,21 @@
 {
   "name": "pw-vikunja",
   "version": "1.0.0",
-  "description": "Тестирование приложения [Vikunja](https://vikunja.io/)",
+  "description": "Тестирование приложения Vikunja",
   "homepage": "https://github.com/katerina-kirilenko/pw-vikunja#readme",
-  "bugs": {
-    "url": "https://github.com/katerina-kirilenko/pw-vikunja/issues"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/katerina-kirilenko/pw-vikunja.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Katerina Kirilenko",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test",
-    "test:ui": "npx playwright test --ui",
+    "test:ui": "npx playwright test --project=ui-tests",
+    "test:api": "npx playwright test --project=api-tests",
+    "test:all": "npx playwright test",
+    "test:ui-mode": "npx playwright test --ui",
     "test:report": "npx playwright show-report",
     "test:update-snapshots": "npx playwright test --update-snapshots",
     "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
@@ -33,6 +32,8 @@
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
     "allure-js-commons": "^3.2.0",
-    "allure-playwright": "^3.2.0"
+    "allure-playwright": "^3.2.0",
+    "axios": "^1.8.4",
+    "dotenv": "^16.5.0"
   }
 }

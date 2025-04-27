@@ -17,11 +17,11 @@
       "@pages": [
         "src/pages/index"
       ],
-      "@services/*": [
-        "src/services/*"
+      "@services": [
+        "src/services/index"
       ],
-      "@helpers/*": [
-        "src/helpers/*"
+      "@helpers": [
+        "src/helpers/index"
       ],
       "@types": [
         "src/types/index"
