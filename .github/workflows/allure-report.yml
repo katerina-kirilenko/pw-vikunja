@@ -36,11 +36,23 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
 
-      # 5. Запуск тестов Playwright
-      - name: Run Playwright tests
-        run: npx playwright test
+      # 5. Устанавливаем TestOps CLI
+      - name: Setup Allure TestOps CLI
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: ${{ secrets.ALLURE_PROJECT_ID }}
 
-      # 6. Сохранение отчетов Playwright
+      # 6. Запускаем вотчер allurectl и собираем результаты в allure-results
+      - name: Run Playwright tests and upload to Allure TestOps
+        run: |
+          allurectl watch -- npx playwright test
+        env:
+          # Путь к папке с результатами Allure
+          ALLURE_RESULTS: './allure-results'
+
+      # 7. Сохранение отчетов Playwright
       - uses: actions/upload-artifact@v4
         if: always()
         continue-on-error: true
@@ -49,7 +61,7 @@ jobs:
           path: test-results
           retention-days: 20
 
-      # 7. Сохранение отчетов Allure
+      # 8. Сохранение отчетов Allure
       - uses: actions/upload-artifact@v4
         if: always()
         continue-on-error: true
@@ -58,7 +70,7 @@ jobs:
           path: allure-results
           retention-days: 20
 
-      # 8. Забрать результаты предыдущего запуска
+      # 9. Проверить gh-pages history
       - name: Checkout repository
         uses: actions/checkout@v4
         if: always()
@@ -67,7 +79,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      # 9. Генерация Allure отчёта
+      # 10. Генерация Allure отчёта с историей и деплой на gh-pages
       - uses: simple-elf/allure-report-action@master
         if: always()
         id: allure-report
@@ -77,7 +89,6 @@ jobs:
           allure_report: allure-report
           keep_reports: 20
 
-      # 10. Deploy отчёта на gh-pages
       - name: Deploy report
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -85,21 +96,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
-
-      # 11. Устанавливаем allurectl
-      - name: Setup Allure TestOps CLI
-        uses: allure-framework/setup-allurectl@v1
-        with:
-          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
-          allure-token: ${{ secrets.ALLURE_TOKEN }}
-          allure-project-id: ${{ secrets.ALLURE_PROJECT_ID }}
-
-      # 12. Запускаем вотчер allurectl
-      - name: Run tests and upload to Allure TestOps
-        run: |
-          allurectl watch \
-            --allure.endpoint=${{ env.ALLURE_ENDPOINT }} \
-            --allure.token=${{ env.ALLURE_TOKEN }} \
-            --allure.project-id=${{ env.ALLURE_PROJECT_ID }} \
-            -- \
-            npm test 
