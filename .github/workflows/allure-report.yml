@@ -10,6 +10,11 @@ on:
   # ручной запуск
   workflow_dispatch:
 
+env:
+  ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
+  ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
+  ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+
 jobs:
   e2e:
     timeout-minutes: 5
@@ -72,7 +77,7 @@ jobs:
           allure_report: allure-report
           keep_reports: 20
 
-      # 10. Deploy отчёта
+      # 10. Deploy отчёта на gh-pages
       - name: Deploy report
         if: always()
         uses: peaceiris/actions-gh-pages@v4
@@ -80,3 +85,21 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
+
+      # 11. Устанавливаем allurectl
+      - name: Setup Allure TestOps CLI
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: ${{ secrets.ALLURE_PROJECT_ID }}
+
+      # 12. Запускаем вотчер allurectl
+      - name: Run tests and upload to Allure TestOps
+        run: |
+          allurectl watch \
+            --allure.endpoint=${{ env.ALLURE_ENDPOINT }} \
+            --allure.token=${{ env.ALLURE_TOKEN }} \
+            --allure.project-id=${{ env.ALLURE_PROJECT_ID }} \
+            -- \
+            npm test 
