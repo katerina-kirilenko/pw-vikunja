@@ -1,19 +1,20 @@
 {
   "base": {
+    "logo": "",
     "project": "PW autotests for Vikunja",
     "environment": "some env",
     "comment": "some comment",
     "reportLink": "",
-    "language": "ru",
+    "language": "en",
     "allureFolder": "allure-report",
     "enableChart": true,
-    "enableSuitesPublishing": true,
-    "customData": {},
-    "telegram": {
-      "token": "",
-      "chat": "",
-      "topic": "",
-      "replyTo": ""
-    }
+    "enableSuitesPublishing": false,
+    "customData": {}
+  },
+  "telegram": {
+    "token": "${TELEGRAM_BOT_TOKEN}",
+    "chat": "${TELEGRAM_CHAT_ID}",
+    "topic": "",
+    "replyTo": ""
   }
 }
