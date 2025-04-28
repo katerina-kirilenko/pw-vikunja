@@ -1,0 +1,19 @@
+{
+  "base": {
+    "project": "PW autotests for Vikunja",
+    "environment": "some env",
+    "comment": "some comment",
+    "reportLink": "",
+    "language": "ru",
+    "allureFolder": "allure-report",
+    "enableChart": true,
+    "enableSuitesPublishing": true,
+    "customData": {},
+    "telegram": {
+      "token": "",
+      "chat": "",
+      "topic": "",
+      "replyTo": ""
+    }
+  }
+}
