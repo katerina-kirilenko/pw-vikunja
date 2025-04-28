@@ -67,9 +67,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          java 
-            "-DconfigFile=notifications/config.json"
-            -jar notifications/allure-notifications-4.9.0.jar
+          java "-DconfigFile=notifications/config.json" -jar notifications/allure-notifications-4.9.0.jar
 
       # 9. Сохранение отчетов Playwright
       - uses: actions/upload-artifact@v4
