@@ -119,4 +119,4 @@ jobs:
       # 13. Отправить уведомление в Telegram с помощью Allure-Notifications
       - name: Send Telegram notification
         run: |
-          java "-DconfigFile=notifications/config.json" -jar notifications/allure-notifications-4.9.0.jar
+          java "-DconfigFile=notifications/tmp/config.json" -jar notifications/allure-notifications-4.9.0.jar
