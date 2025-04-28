@@ -14,6 +14,8 @@ env:
   ALLURE_ENDPOINT: ${{ secrets.ALLURE_ENDPOINT }}
   ALLURE_PROJECT_ID: ${{ secrets.ALLURE_PROJECT_ID }}
   ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
 jobs:
   e2e:
@@ -52,7 +54,24 @@ jobs:
           # Путь к папке с результатами Allure
           ALLURE_RESULTS: './allure-results'
 
-      # 7. Сохранение отчетов Playwright
+      # 7. Установка Java для запуска JAR файлов
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 8. Отправить уведомление в Telegram с помощью Allure-Notifications
+      - name: Send Telegram notification
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          java 
+            "-DconfigFile=notifications/config.json"
+            -jar notifications/allure-notifications-4.9.0.jar
+
+      # 9. Сохранение отчетов Playwright
       - uses: actions/upload-artifact@v4
         if: always()
         continue-on-error: true
@@ -61,7 +80,7 @@ jobs:
           path: test-results
           retention-days: 20
 
-      # 8. Сохранение отчетов Allure
+      # 10. Сохранение отчетов Allure
       - uses: actions/upload-artifact@v4
         if: always()
         continue-on-error: true
@@ -70,7 +89,7 @@ jobs:
           path: allure-results
           retention-days: 20
 
-      # 9. Проверить gh-pages history
+      # 11. Проверить gh-pages history
       - name: Checkout repository
         uses: actions/checkout@v4
         if: always()
@@ -79,7 +98,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      # 10. Генерация Allure отчёта с историей и деплой на gh-pages
+      # 12. Генерация Allure отчёта с историей и деплой на gh-pages
       - uses: simple-elf/allure-report-action@master
         if: always()
         id: allure-report
