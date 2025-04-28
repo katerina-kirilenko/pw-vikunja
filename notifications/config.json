@@ -10,5 +10,11 @@
     "enableChart": true,
     "enableSuitesPublishing": false,
     "customData": {}
+  },
+  "telegram": {
+    "token": "",
+    "chat": "",
+    "topic": "",
+    "replyTo": ""
   }
 }
