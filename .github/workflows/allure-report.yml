@@ -106,10 +106,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 12. Отправить уведомление в Telegram с помощью Allure-Notifications
+      # 12. Рендерим config.json с настоящими секретами
+      - name: Render notifications config
+        run: |
+          mkdir -p notifications/tmp
+          sed \
+            -e "s|\$TELEGRAM_BOT_TOKEN|${{ secrets.TELEGRAM_BOT_TOKEN }}|g" \
+            -e "s|\$TELEGRAM_CHAT_ID|${{ secrets.TELEGRAM_CHAT_ID }}|g" \
+            notifications/config.json > notifications/tmp/config.json
+        shell: bash
+
+      # 13. Отправить уведомление в Telegram с помощью Allure-Notifications
       - name: Send Telegram notification
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           java "-DconfigFile=notifications/config.json" -jar notifications/allure-notifications-4.9.0.jar
