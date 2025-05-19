@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import * as os from "node:os";
-import { URLs } from "./src/types";
+import { URLs } from "@types";
 import * as dotenv from "dotenv";
 
 /**
@@ -68,12 +68,6 @@ export default defineConfig({
     {
       name: "api-tests",
       testDir: "./e2e/api",
-      use: {
-        baseURL: URLs.api,
-        extraHTTPHeaders: {
-          Authorization: `Bearer ${process.env.API_TOKEN}`,
-        },
-      },
     },
   ],
   outputDir: "test-results/",

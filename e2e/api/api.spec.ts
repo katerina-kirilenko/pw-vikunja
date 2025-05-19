@@ -1,25 +1,16 @@
-import { test, expect } from "@playwright/test";
-import { TaskService, ProjectService } from "@services";
-import { IProject, ITask, Messages } from "@types";
+import { expect } from "@playwright/test";
+import { ITask, Messages } from "@types";
 import { generateTitle } from "@helpers";
+import { apiTest as test } from "@fixtures";
 
 test.describe("API tests", async () => {
-  const taskService = new TaskService();
-  const projectService = new ProjectService();
-
-  let project: IProject;
-
-  test.beforeAll("Создать проект", async () => {
-    project = await projectService.create({ title: generateTitle() });
-  });
-
-  test("Получить все задачи", async () => {
+  test("Получить все задачи", async ({ taskService }) => {
     const data: ITask[] = await taskService.getAll();
 
     expect(data.length).toBeGreaterThanOrEqual(0);
   });
 
-  test("Получить одну задачу", async () => {
+  test("Получить одну задачу", async ({ taskService, project }) => {
     const task = await taskService.create(project.id, {
       title: generateTitle(),
     });
@@ -28,7 +19,7 @@ test.describe("API tests", async () => {
     expect(data.title).toBe(task.title);
   });
 
-  test("Создать задачу", async () => {
+  test("Создать задачу", async ({ taskService, project }) => {
     const task = await taskService.create(project.id, {
       title: generateTitle(),
     });
@@ -37,7 +28,7 @@ test.describe("API tests", async () => {
     expect(data.project_id).toEqual(task.project_id);
   });
 
-  test("Обновить задачу", async () => {
+  test("Обновить задачу", async ({ taskService, project }) => {
     const task = await taskService.create(project.id, {
       title: generateTitle(),
     });
@@ -51,7 +42,7 @@ test.describe("API tests", async () => {
     expect(updatedTask.done).toBeTruthy();
   });
 
-  test("Удалить задачу", async () => {
+  test("Удалить задачу", async ({ taskService, project }) => {
     const task = await taskService.create(project.id, {
       title: generateTitle(),
     });

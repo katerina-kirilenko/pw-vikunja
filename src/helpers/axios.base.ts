@@ -1,5 +1,6 @@
 import axios from "axios";
 import { URLs } from "@types";
+import { loadToken } from "./auth";
 
 export const axiosBase = axios.create({
   baseURL: URLs.api,
@@ -9,7 +10,7 @@ export const axiosBase = axios.create({
 });
 
 axiosBase.interceptors.request.use((config) => {
-  const token = process.env.API_TOKEN;
+  const token = loadToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

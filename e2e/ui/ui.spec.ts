@@ -1,38 +1,30 @@
-import { test, expect } from "@playwright/test";
-import { LoginPage, OverviewPage, ProjectsPage, TaskPage } from "@pages";
+import { expect } from "@playwright/test";
 import { generateTitle } from "@helpers";
+import { appTest as test } from "@fixtures";
 
 test.describe("UI tests", () => {
-  let overviewPage: OverviewPage;
-  let loginPage: LoginPage;
-  let projectsPage: ProjectsPage;
-  let taskPage: TaskPage;
-
-  test.beforeEach(async ({ page }) => {
-    overviewPage = new OverviewPage(page);
-    loginPage = new LoginPage(page);
-    projectsPage = new ProjectsPage(page);
-    taskPage = new TaskPage(page);
-
-    await loginPage.goto();
-    await expect(overviewPage.tasksListTitle).toBeVisible();
-  });
-
-  test("Пользователь может добавить задачу на доску", async () => {
+  test("Пользователь может добавить задачу на доску", async ({
+    overviewPage,
+  }) => {
     const taskTitle = generateTitle();
     await overviewPage.addTask(taskTitle);
 
     await expect(overviewPage.taskTitleLink(taskTitle)).toBeVisible();
   });
 
-  test("Пользователь может завершить задачу кликнув чекбокс", async () => {
+  test("Пользователь может завершить задачу кликнув чекбокс", async ({
+    overviewPage,
+  }) => {
     await overviewPage.finishTask();
     const countTaskDone = await overviewPage.getFinishedTasks();
 
     expect(countTaskDone).toBeGreaterThan(0);
   });
 
-  test("Пользователь может изменить заголовок задачи", async () => {
+  test("Пользователь может изменить заголовок задачи", async ({
+    overviewPage,
+    taskPage,
+  }) => {
     const taskTitle = generateTitle();
     await overviewPage.addTask(taskTitle);
     await expect(overviewPage.taskTitleLink(taskTitle)).toBeVisible();
@@ -44,14 +36,14 @@ test.describe("UI tests", () => {
     await expect(taskPage.taskTitle).toContainText(newTaskTitle);
   });
 
-  test("Пользователь может создать новый проект", async () => {
+  test("Пользователь может создать новый проект", async ({ projectsPage }) => {
     const projectTitle = generateTitle();
     await projectsPage.createProject(projectTitle);
 
     expect(await projectsPage.isProjectExists(projectTitle)).toBeTruthy();
   });
 
-  test("Пользователь может удалить проект", async () => {
+  test("Пользователь может удалить проект", async ({ projectsPage }) => {
     const projectTitle = generateTitle();
     await projectsPage.deleteProject(projectTitle);
 
